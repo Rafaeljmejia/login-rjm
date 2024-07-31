@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Profesores - Tecnología</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .edit-btn, .save-btn {
+            background-color: #4CAF50; /* Verde */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .save-btn {
+            background-color: #2196F3; /* Azul */
+        }
+        .filter-btn {
+            background-color: #f44336; /* Rojo */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Panel de Profesores - Tecnología</h2>
+
+<div>
+    <button class="filter-btn" onclick="filterTable('')">Todos</button>
+    <button class="filter-btn" onclick="filterTable('10A')">10A</button>
+    <button class="filter-btn" onclick="filterTable('10B')">10B</button>
+    <button class="filter-btn" onclick="filterTable('10C')">10C</button>
+    <button class="filter-btn" onclick="filterTable('11A')">11A</button>
+    <button class="filter-btn" onclick="filterTable('11B')">11B</button>
+    <button class="filter-btn" onclick="filterTable('11C')">11C</button>
+</div>
+
+<table id="student-table">
+    <thead>
+        <tr>
+            <th>Nombre del Estudiante</th>
+            <th>Llamadas de Atención</th>
+            <th>Situaciones</th>
+            <th>Editar</th>
+        </tr>
+    </thead>
+    <tbody id="student-tbody">
+        <!-- Aquí se rellenará la tabla dinámicamente -->
+    </tbody>
+</table>
+
+<script>
+    const students = [
+        "Juan Manuel Acosta", "Daniel Fernando", "Salome Córdoba", "Anni Cruz", "Juan José Diaz", 
+        "Isabella Diaz", "Emanuel Torrado", "Isabel Ochoa", "Luna Fernández", "Estefanía Gallego", 
+        "Juan José Gallo", "Andrew Gomez", "Zayret", "Isabella Jaramillo", "Santiago López", 
+        "Valentina Lora", "Miguel Marín", "Juan José Medina", "Santiago Molina", "Andrea Muñoz", 
+        "Juan Miguel Nieto", "Víctor Ochoa", "Daniel Pacheco", "Samuel Payares", "Edwin Quiroz", 
+        "Samuel Ramírez", "María de los Ángeles", "Juanita del Mar", "Sofía Salebe", "Axel Sánchez", 
+        "Samuel Tabares", "Jerónimo Toro", "Ana Sofía", "Jerónimo Vásquez", "Samuel Velasco", 
+        "Sara Vélez", "Aron Mauricio", "Miguel Yepes", "Tomas Yepes"
+    ];
+
+    function initializeStudentData() {
+        students.forEach(name => {
+            if (!localStorage.getItem(name)) {
+                const studentData = {
+                    attentionCalls: 0,
+                    situations: 'Ninguna'
+                };
+                localStorage.setItem(name, JSON.stringify(studentData));
+            }
+        });
+    }
+
+    function loadStudentData() {
+        const tbody = document.getElementById('student-tbody');
+        tbody.innerHTML = '';
+
+        students.forEach(name => {
+            const studentData = JSON.parse(localStorage.getItem(name)) || {
+                attentionCalls: 0,
+                situations: 'Ninguna'
+            };
+
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-group', '10B');
+
+            tr.innerHTML = `
+                <td>${name}</td>
+                <td>${studentData.attentionCalls}</td>
+                <td>${studentData.situations}</td>
+                <td><a href="editar-estudiante.html?name=${encodeURIComponent(name)}" class="edit-btn">Editar</a></td>
+            `;
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    function filterTable(group) {
+        const rows = document.querySelectorAll('#student-tbody tr');
+        rows.forEach(row => {
+            if (group === '' || row.getAttribute('data-group') === group) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeStudentData();
+        loadStudentData();
+    });
+</script>
+
+</body>
+</html>

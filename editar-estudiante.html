@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Estudiante</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+        .form-actions button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-actions button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Estudiante</h1>
+        <form id="editForm">
+            <div class="form-group">
+                <label for="studentName">Nombre del Estudiante</label>
+                <input type="text" id="studentName" name="studentName">
+            </div>
+            <div class="form-group">
+                <label for="attentionCalls">Llamados de Atención</label>
+                <input type="number" id="attentionCalls" name="attentionCalls">
+            </div>
+            <div class="form-group">
+                <label for="situations">Situaciones</label>
+                <select id="situations" name="situations">
+                    <option value="Ninguna">Ninguna</option>
+                    <option value="Disciplina">Disciplina</option>
+                    <option value="Trabajo en Clase">Trabajo en Clase</option>
+                    <option value="Tareas">Tareas</option>
+                    <option value="Exámenes">Exámenes</option>
+                    <option value="Otros">Otros</option>
+                </select>
+                <input type="text" id="situationsInput" name="situationsInput" style="display:none;">
+            </div>
+            <div class="form-actions">
+                <button type="submit">Guardar</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function initializeForm(studentName) {
+            document.getElementById('studentName').value = studentName;
+
+            const studentData = JSON.parse(localStorage.getItem(studentName)) || {
+                attentionCalls: 0,
+                situations: 'Ninguna'
+            };
+
+            document.getElementById('attentionCalls').value = studentData.attentionCalls;
+            document.getElementById('situations').value = studentData.situations;
+            if (studentData.situations === 'Otros') {
+                document.getElementById('situationsInput').style.display = 'block';
+                document.getElementById('situationsInput').value = studentData.situationsInput || '';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const studentName = urlParams.get('name');
+            if (studentName) {
+                initializeForm(studentName);
+            }
+
+            document.getElementById('situations').addEventListener('change', function () {
+                if (this.value === 'Otros') {
+                    document.getElementById('situationsInput').style.display = 'block';
+                } else {
+                    document.getElementById('situationsInput').style.display = 'none';
+                }
+            });
+        });
+
+        document.getElementById('editForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const studentName = document.getElementById('studentName').value;
+            const attentionCalls = document.getElementById('attentionCalls').value;
+            const situations = document.getElementById('situations').value;
+            const situationsInput = document.getElementById('situationsInput').value;
+
+            const studentData = {
+                attentionCalls,
+                situations,
+                situationsInput: situations === 'Otros' ? situationsInput : ''
+            };
+
+            localStorage.setItem(studentName, JSON.stringify(studentData));
+            alert('Datos guardados correctamente');
+            window.location.href = 'panel-profesores.html';
+        });
+    </script>
+</body>
+</html>
